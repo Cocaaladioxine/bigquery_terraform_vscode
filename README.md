@@ -5,7 +5,7 @@
 
 This extension is a personal project that aims at simplifying work involving BigQuery and Terraform. This extension was developed during my free time to address the challenges of repetitive tasks and streamline our processes at my job.
 
-In our company, where BigQuery and Terraform are frequently utilized, I noticed a need for simplification. Drawing inspiration from familiar ETL tools like Talend and Stambia, I've incorporated features that aim to bring back that simplicity, just like the "reverse schema" button.
+In my company, where BigQuery and Terraform are frequently utilized, I noticed a need for simplification. Drawing inspiration from familiar ETL tools like Talend and Stambia, I've incorporated features that aim to bring back that simplicity, just like the "reverse schema" button.
 
 It's important to acknowledge that while the extension helps increasing efficiency, it does have its limitations. Handling intricate Terraform code, in particular, presents challenges.
 
@@ -20,6 +20,8 @@ In a nutshell, this extension intends to:
 - Address Real Needs: Developed based on genuine feedback from colleagues to ensure practicality.
 
 - Stay Realistic: While it has its limitations, it strives to offer practical solutions for everyday tasks.
+
+At the moment, the code is "closed source", but I 
 
 ## Features
 
@@ -107,6 +109,5 @@ Cleaning up "Todo's"
 - Clone HCL2-parser and upgrade to the latest @tmccombs/hcl2json
 - Check if @tmccombs/hcl2json handles variables
 - Think about the modules and how to handle them
-- Declare a bigquery table from a schema
 
 **Enjoy!**
