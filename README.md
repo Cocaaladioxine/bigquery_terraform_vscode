@@ -42,8 +42,8 @@ To use it, you should have the SDK installed and set up properly, with your acco
 The reason for choosing the BQ command over the libraries is that it can work with your personal account for connections and permissions.
 The libraries, on the other hand, require a service account. Sometimes, your company might not allow a dedicated service account, which can complicate managing access permissions.
 By using your personal account, the extension can function just like the bigquery console on the web.
-
-Have a look at the features [here](features.MD).
+ 
+Have a look at the features [here](features.md).
 
 ## Requirements
 
