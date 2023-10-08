@@ -5,7 +5,7 @@
 
 This extension is a personal project that aims at simplifying work involving BigQuery and Terraform. This extension was developed during my free time to address the challenges of repetitive tasks and streamline our processes at my job.
 
-In our company, where BigQuery and Terraform are frequently utilized, I noticed a need for simplification. Drawing inspiration from familiar ETL tools like Talend and Stambia, I've incorporated features that aim to bring back that simplicity, just like the "reverse schema" button.
+In my company, where BigQuery and Terraform are frequently utilized, I noticed a need for simplification. Drawing inspiration from familiar ETL tools like Talend and Stambia, I've incorporated features that aim to bring back that simplicity, just like the "reverse schema" button.
 
 It's important to acknowledge that while the extension helps increasing efficiency, it does have its limitations. Handling intricate Terraform code, in particular, presents challenges.
 
@@ -20,6 +20,10 @@ In a nutshell, this extension intends to:
 - Address Real Needs: Developed based on genuine feedback from colleagues to ensure practicality.
 
 - Stay Realistic: While it has its limitations, it strives to offer practical solutions for everyday tasks.
+
+At the moment, the code is "closed source", but you can freely use the extension.
+I'm open to change and improvement requests.
+
 
 ## Features
 
@@ -43,7 +47,7 @@ The reason for choosing the BQ command over the libraries is that it can work wi
 The libraries, on the other hand, require a service account. Sometimes, your company might not allow a dedicated service account, which can complicate managing access permissions.
 By using your personal account, the extension can function just like the bigquery console on the web.
 
-Have a look at the features [here](features.MD).
+Have a look at the features [here](features.md).
 
 ## Requirements
 
