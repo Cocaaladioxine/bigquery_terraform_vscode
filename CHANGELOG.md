@@ -31,3 +31,18 @@ New functionality :
 Cleaning up "Todo's"
 - simplify Resource interface, remove 'file'
 - fixed a bug when generating plantUML file
+
+### 0.2.2
+
+- improved unix* compatibility (no more "C:" in the code)
+- Wizards : 
+    - Auto declare terraform code for a view from a sql query
+    - Auto declare google_bigquery_table for a table from a JSON Schema file 
+- Ignore subdirectories when looking for resources and locals => Prepare compliance with modules
+- Two different kind of resources may have the same name
+- Improved README.md
+- Added a features.md
+
+### 0.2.3
+
+- fixed a bug concerning paths on *nix os

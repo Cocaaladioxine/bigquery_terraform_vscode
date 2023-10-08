@@ -5,7 +5,7 @@
 
 This extension is a personal project that aims at simplifying work involving BigQuery and Terraform. This extension was developed during my free time to address the challenges of repetitive tasks and streamline our processes at my job.
 
-In my company, where BigQuery and Terraform are frequently utilized, I noticed a need for simplification. Drawing inspiration from familiar ETL tools like Talend and Stambia, I've incorporated features that aim to bring back that simplicity, just like the "reverse schema" button.
+In our company, where BigQuery and Terraform are frequently utilized, I noticed a need for simplification. Drawing inspiration from familiar ETL tools like Talend and Stambia, I've incorporated features that aim to bring back that simplicity, just like the "reverse schema" button.
 
 It's important to acknowledge that while the extension helps increasing efficiency, it does have its limitations. Handling intricate Terraform code, in particular, presents challenges.
 
@@ -20,8 +20,6 @@ In a nutshell, this extension intends to:
 - Address Real Needs: Developed based on genuine feedback from colleagues to ensure practicality.
 
 - Stay Realistic: While it has its limitations, it strives to offer practical solutions for everyday tasks.
-
-At the moment, the code is "closed source", but I 
 
 ## Features
 
@@ -44,8 +42,8 @@ To use it, you should have the SDK installed and set up properly, with your acco
 The reason for choosing the BQ command over the libraries is that it can work with your personal account for connections and permissions.
 The libraries, on the other hand, require a service account. Sometimes, your company might not allow a dedicated service account, which can complicate managing access permissions.
 By using your personal account, the extension can function just like the bigquery console on the web.
- 
-Have a look at the features [here](features.md).
+
+Have a look at the features [here](features.MD).
 
 ## Requirements
 
@@ -86,12 +84,6 @@ SQL
 
 ## Release Notes
 
-### 0.2.1
-
-Cleaning up "Todo's"
-- simplify Resource interface, remove 'file'
-- fixed a bug when generating plantUML file
-
 ### 0.2.2
 
 - improved unix* compatibility (no more "C:" in the code)
@@ -102,6 +94,10 @@ Cleaning up "Todo's"
 - Two different kind of resources may have the same name
 - Improved README.md
 - Added a features.md
+
+### 0.2.3
+
+- fixed a bug concerning paths on *nix os
 
 ## TODO
 
