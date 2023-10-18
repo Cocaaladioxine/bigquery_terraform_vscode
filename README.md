@@ -103,11 +103,16 @@ SQL
 
 - fixed a bug concerning paths on *nix os
 
+### 0.2.4
+
+- Better objects locals detection and rejection
+
 ## TODO
 
 - Finalize ESLint
 - Clone HCL2-parser and upgrade to the latest @tmccombs/hcl2json
 - Check if @tmccombs/hcl2json handles variables
 - Think about the modules and how to handle them
+- See how to handle objects locals
 
 **Enjoy!**

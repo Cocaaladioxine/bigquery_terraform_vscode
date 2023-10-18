@@ -46,3 +46,7 @@ Cleaning up "Todo's"
 ### 0.2.3
 
 - fixed a bug concerning paths on *nix os
+
+### 0.2.4
+
+- Better objects locals detection and rejection
