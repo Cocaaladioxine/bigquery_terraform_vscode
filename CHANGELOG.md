@@ -50,3 +50,9 @@ Cleaning up "Todo's"
 ### 0.2.4
 
 - Better objects locals detection and rejection
+
+### 0.2.5
+
+- add and handle a config `bqtf.tableSchemaDefinition`
+- add and handle a config `bqtf.partitionFilterOutsideDeclaration`
+- fix a bug that prevented to use the wizard on a table without date/datetime/timestamp field

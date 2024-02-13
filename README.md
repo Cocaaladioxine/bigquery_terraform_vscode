@@ -58,17 +58,20 @@ Up to date and configured Google Cloud SDK
 
 This extension contributes the following settings:
 
-* `bqtf.workspaces`: Set the terraform workspaces you'll be working with as an array
-* `bqtf.defaultWorkspace`: set the default terraform workspace, as a string
-* `bqtf.plantUmlConfig`: set the plantUml style, as a string, has default
+- `bqtf.workspaces`: Set the terraform workspaces you'll be working with as an array
+- `bqtf.defaultWorkspace`: set the default terraform workspace, as a string
+- `bqtf.plantUmlConfig`: set the plantUml style, as a string, has default
 - `bqtf.preferredViewLocation`: Sets the view wizard behavior, allowing you to store the declaration in [one, many] files. Choosing 'many' will create a dedicated `.tf` file for each resource.
 - `bqtf.viewFile`: Sets the name of the view wizard target file when the preferred view location is set to 'one'.
 - `bqtf.preferredTableLocation`: Sets the table wizard behavior, allowing you to store the declaration in [one, many] files. Choosing 'many' will create a dedicated `.tf` file for each resource.
 - `bqtf.tableFile`: Sets the name of the table wizard target file when the preferred view location is set to 'one'.
-* `bqtf.autoDataset`: if there's only one dataset declared, use it and don't ask when using view/table wizard
+- `bqtf.autoDataset`: if there's only one dataset declared, use it and don't ask when using view/table wizard
+- `bqtf.tableSchemaDefinition`: Allows you to use whatever table schema declaration you want when using the table declaration Wizard. You can add functions (eg. replace) or use the templatefile function. Use the {{path}} notation for the file path auto-replacement
+- `bqtf.partitionFilterOutsideDeclaration`: If selected, require_partition_filter will be declared as expected by the Google provider version >= 5.3. Starting with this version, the require_partition_filter argument is located outside the time_partitioning definition. Default to False (old behavior)."
+
 
 Inactive at the moment : 
-* `"bqtf.additionalFieldsFiles`:
+- `"bqtf.additionalFieldsFiles`:
 
 ## Known Issues and Limitations
 
@@ -83,21 +86,7 @@ Move Schema/SQL to file only works with following syntax :
 SQL
 ```
 
-
-
-
 ## Release Notes
-
-### 0.2.2
-
-- improved unix* compatibility (no more "C:" in the code)
-- Wizards : 
-    - Auto declare terraform code for a view from a sql query
-    - Auto declare google_bigquery_table for a table from a JSON Schema file 
-- Ignore subdirectories when looking for resources and locals => Prepare compliance with modules
-- Two different kind of resources may have the same name
-- Improved README.md
-- Added a features.md
 
 ### 0.2.3
 
@@ -106,6 +95,12 @@ SQL
 ### 0.2.4
 
 - Better objects locals detection and rejection
+
+### 0.2.5
+
+- add and handle a config `bqtf.tableSchemaDefinition`
+- add and handle a config `bqtf.partitionFilterOutsideDeclaration`
+- fix a bug that prevented to use the wizard on a table without date/datetime/timestamp field
 
 ## TODO
 
