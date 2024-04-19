@@ -1,0 +1,73 @@
+[
+    {
+      "resource": {
+        "google_bigquery_dataset": {
+          "dataplatform--dwh--b2c_transport_management": [
+            {
+              "dataset_id": "${local.DataSetId}",
+              "description": "This dataset holds the tables related to the B.T.'s found in the collibra ABB \"B2C Transport Management\".",
+              "friendly_name": "B2C Transport Management Datawarehouse",
+              "location": "${local.gcp_zone}",
+              "project": "${local.project_name}"
+            }
+          ]
+        },
+        "google_bigquery_dataset_access": {
+          "dataplatform--dwh--b2c_transport_management_group_by_email": [
+            {
+              "dataset_id": "${google_bigquery_dataset.dataplatform--dwh--b2c_transport_management.dataset_id}",
+              "for_each": {
+                "lmfr-ddf-data-supply@adeo.com": "OWNER"
+              },
+              "group_by_email": "${each.key}",
+              "project": "${local.project_name}",
+              "role": "${each.value}"
+            }
+          ],
+          "dataplatform--dwh--b2c_transport_management_user_by_email": [
+            {
+              "dataset_id": "${google_bigquery_dataset.dataplatform--dwh--b2c_transport_management.dataset_id}",
+              "for_each": {},
+              "project": "${local.project_name}",
+              "role": "${each.value}",
+              "user_by_email": "${each.key}"
+            }
+          ]
+        },
+        "google_bigquery_table": {
+          "bq_dataplatform--dwh--b2c_transport_management_b2c_transport_order": [
+            {
+              "dataset_id": "${google_bigquery_dataset.dataplatform--dwh--b2c_transport_management.dataset_id}",
+              "deletion_protection": false,
+              "description": "List of B2C transport orders (only Last Mile ATM), related to B2C transport Order : https://adeo.collibra.com/asset/d0fa8ad7-6946-4fe7-8b3c-86c3a908190f, Delivery Circuit : https://adeo.collibra.com/asset/aa7c8091-5277-477a-962f-67fda450893d, Customer Delivery mode : https://adeo.collibra.com/asset/8c5582d4-da04-432b-8dbc-9e2e737c99d3",
+              "project": "${local.project_name}",
+              "schema": "${replace(file(\"schema_tables/tf_b2c_transport_order.json\"),\"REQUIRED\", \"NULLABLE\")}",
+              "table_id": "vf_b2c_transport_order",
+              "view": [
+                {
+                  "query": "${templatefile(\"query_views/vf_b2c_transport_order.sql\", {\t\r\n\t\t\tods_name = local.ods_name\r\n\tdwh_name = local.dwh_name\r\n    })}",
+                  "use_legacy_sql": false
+                }
+              ]
+            }
+          ],
+          "bq_dataplatform--dwh--b2c_transport_management_my_view_2": [
+            {
+              "count": 0,
+              "dataset_id": "${google_bigquery_dataset.dataplatform--dwh--b2c_transport_management.dataset_id}",
+              "deletion_protection": false,
+              "project": "${local.project_name}",
+              "table_id": "my_view_2",
+              "view": [
+                {
+                  "query": "${templatefile(\"query_views/my_view_2.sql\", {\r\n      ods_prefix_name = local.ods_prefix_name\r\n      dwh_prefix_name = local.dwh_prefix_name\r\n      dataset_name = google_bigquery_dataset.dataplatform--dwh--b2c_transport_management.dataset_id\r\n      workspace = terraform.workspace\r\n    })}",
+                  "use_legacy_sql": false
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    null
+  ]

@@ -1,0 +1,283 @@
+{
+  "name": "bigqueryhelper",
+  "displayName": "BigQuery and Terraform Helper",
+  "description": "An extension to help with BigQuery and Terraform development",
+  "version": "0.2.5",
+  "publisher": "Cocaaladioxine",
+  "licence": "unlicenced",
+  "engines": {
+    "vscode": "^1.64.0"
+  },
+  "private": "true",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cocaaladioxine/bigquery-tf-vscode-ext/"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "bigqueryhelper.bqDryRun",
+        "title": "BigQuery Dry Run"
+      },
+      {
+        "command": "bigqueryhelper.tester",
+        "title": "BQ Helper Dev Test"
+      },
+      {
+        "command": "bigqueryhelper.terraformRefresh",
+        "title": "Refresh terraform resources",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "bigqueryhelper.terraformReplace",
+        "title": "Replace Terraform locals by their actual value",
+        "icon": "$(replace)"
+      },
+      {
+        "command": "bigqueryhelper.terraformFormat",
+        "title": "Format the SQL request with Terraform Locals",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "bigqueryhelper.reverseViewSchema",
+        "title": "Reverse Table Schema",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "bigqueryhelper.goToResource",
+        "title": "Go to Resource"
+      },
+      {
+        "command": "bigqueryhelper.genDrawIo",
+        "title": "Generate Create Table for Draw.io"
+      },
+      {
+        "command": "bigqueryhelper.genPlantUml",
+        "title": "Generate PlantUml"
+      },
+      {
+        "command": "bigqueryhelper.genPlantUmlWViews",
+        "title": "Generate PlantUml (with views)"
+      },
+      {
+        "command": "bigqueryhelper.moveSqlToFile",
+        "title": "Move SQL to separate files"
+      },
+      {
+        "command": "bigqueryhelper.moveSchemaToFile",
+        "title": "Move Schemas to separate files"
+      },
+      {
+        "command": "bigqueryhelper.SQLSelectAllFromSchema",
+        "title": "Generate a select all from this schema"
+      },
+      {
+        "command": "bigqueryhelper.SQLSelectAllFromTableId",
+        "title": "BQTF: Generate a select all from a table Id"
+      },
+      {
+        "command": "bigqueryhelper.declareView",
+        "title": "Declare this view in Terraform files"
+      },
+      {
+        "command": "bigqueryhelper.declareTable",
+        "title": "Declare this table in Terraform files"
+      },
+      {
+        "command": "bigqueryhelper.ressources.getTerraformBasePath",
+        "title": "Retrieve the terraform base path"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "terraformResources",
+          "name": "Terraform Resources"
+        }
+      ]
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "bigqueryhelper.bqDryRun",
+          "group": "BigqueryHelper@1",
+          "when": "resourceExtname == .sql || editorLangId =~ /SQL/i"
+        },
+        {
+          "command": "bigqueryhelper.reverseViewSchema",
+          "group": "BigqueryHelper@2",
+          "when": "resourceExtname == .sql || editorLangId =~ /SQL/i"
+        },
+        {
+          "command": "bigqueryhelper.SQLSelectAllFromSchema",
+          "group": "Bigqueryhelper@3",
+          "when": "resourceExtname == .json"
+        },
+        {
+          "command": "bigqueryhelper.declareView",
+          "group": "BigqueryHelper@4",
+          "when": "resourceExtname == .sql || editorLangId =~ /SQL/i"
+        },
+        {
+          "command": "bigqueryhelper.declareTable",
+          "group": "BigqueryHelper@5",
+          "when": "resourceExtname == .json"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "bigqueryhelper.terraformReplace",
+          "when": "view == terraformResources",
+          "group": "navigation@1"
+        },
+        {
+          "command": "bigqueryhelper.terraformFormat",
+          "when": "view == terraformResources",
+          "group": "navigation@2"
+        },
+        {
+          "command": "bigqueryhelper.terraformRefresh",
+          "when": "view == terraformResources",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "bigqueryhelper.goToResource",
+          "when": "view == terraformResources && viewItem =~ /clickable/"
+        },
+        {
+          "command": "bigqueryhelper.genDrawIo",
+          "when": "view == terraformResources && viewItem =~ /Type_Table|google_bigquery_table/"
+        },
+        {
+          "command": "bigqueryhelper.genPlantUml",
+          "when": "view == terraformResources && viewItem =~ /Type_Table|google_bigquery_table/"
+        },
+        {
+          "command": "bigqueryhelper.genPlantUmlWViews",
+          "when": "view == terraformResources && viewItem =~ /Type_View|google_bigquery_table/"
+        },
+        {
+          "command": "bigqueryhelper.moveSqlToFile",
+          "when": "view == terraformResources && viewItem =~ /google_bigquery_table/"
+        },
+        {
+          "command": "bigqueryhelper.moveSchemaToFile",
+          "when": "view == terraformResources && viewItem =~ /google_bigquery_table/"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "BiqQuery Terraform Extension",
+      "properties": {
+        "bqtf.workspaces": {
+          "type": "array",
+          "default": [],
+          "description": "Set a list of Terraform Workspace names for use with the BigQuery Terraform Extension"
+        },
+        "bqtf.defaultWorkspace": {
+          "type": "string",
+          "default": null,
+          "description": "Set a default Terraform Workspace for use with the BigQuery Terraform Extension"
+        },
+        "bqtf.plantUmlConfig": {
+          "type": "string",
+          "default": "!procedure part($table)\n      !partition_cols_size=%size($data[$table].partition_cols)\n      !$partition_cols=$data[$table].partition_cols[0]\n      !loop_idx=1\n      !while (loop_idx != partition_cols_size)\n         !$partition_cols=$partition_cols + \",\" + $data[$table].partition_cols[loop_idx]\n         !loop_idx=loop_idx+1\n      !endwhile\n      <b><color:#3944bc><&layers></color> $partition_cols</b>\n    !endprocedure\n    \n    !procedure cluster($table)\n      !clustering_cols_size=%size($data[$table].clustering_cols)\n      !$clustering_cols=$data[$table].clustering_cols[0]\n      !loop_idx=1\n      !while (loop_idx != clustering_cols_size)\n         !$clustering_cols=$clustering_cols + \",\" + $data[$table].clustering_cols[loop_idx]\n         !loop_idx=loop_idx+1\n      !endwhile\n      <b><color:#3944bc><&menu></color> $clustering_cols</b>\n    !endprocedure\n    !define primary_key(x) <b><color:#b8861b><&key></color> x</b>\n    !define foreign_key(x) <color:#aaaaaa><&key></color> x\n    !define column(x) <color:#efefef><&media-record></color> x\n    !define table(x) entity x << (T, white) >>\n    \n    entity table << (T, white) >> {\n      <b><color:#3944bc><&layers></color> </b><size:10><&arrow-right> //Partitioning column-s//</size> \n      <b><color:#3944bc><&menu></color> </b><size:10><&arrow-right> //Clustering column-s//</size> \n      ---\n      <b><color:#b8861b><&key></color> </b><size:10><&arrow-right> //Primary Key-s//</size> \n      <b><color:#aaaaaa><&key></color> </b><size:10><&arrow-right> //Foreign Key-s//</size> \n    }",
+          "description": "Set a PlantUML configuration for use with the BigQuery Terraform Extension"
+        },
+        "bqtf.preferedViewLocation": {
+          "type": "string",
+          "default": "one",
+          "description": "Choose to store new views (google_bigquery_table) declaration in one big file (one), or each view in its own file (many)",
+          "enum": [
+            "one",
+            "many"
+          ],
+          "enumDescriptions": [
+            "Store every views in the same file",
+            "Store each view in its own file"
+          ]
+        },
+        "bqtf.viewFile": {
+          "type": "string",
+          "default": "views.tf",
+          "description": "Name of the file to store views declarations, when using a one file configuration"
+        },
+        "bqtf.preferedTableLocation": {
+          "type": "string",
+          "default": "one",
+          "description": "Choose to store new table (google_bigquery_table) declaration in one big file (one), or each table in its own file (many)",
+          "enum": [
+            "one",
+            "many"
+          ],
+          "enumDescriptions": [
+            "Store every tables in the same file",
+            "Store each table in its own file"
+          ]
+        },
+        "bqtf.tableFile": {
+          "type": "string",
+          "default": "tables.tf",
+          "description": "Name of the file to store tables declarations, when using a one file configuration"
+        },
+        "bqtf.tableSchemaDefinition": {
+          "type": "string",
+          "default": "file(\"{{path}}\")",
+          "description": "Allows you to use whatever table schema declaration you want. You can add functions (eg. replace) or use the templatefile function. Use the {{path}} notation for the file path auto-replacement"
+        },
+        "bqtf.autoDataset": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use the declared google_bigquery_dataset for table/view declaration if only one has been declared"
+        },
+        "bqtf.additionalFieldsFiles": {
+          "type": "array",
+          "description": "-INACTIVE- If set, you'll be able to choose an additional file for the table schema. Usually used to store mandatory fields at the end of the table. Input a list of files. Files are expected to be located in the same directory as the base schema file."
+        },
+        "bqtf.partitionFilterOutsideDeclaration": {
+          "type": "boolean",
+          "default": false,
+          "description": "If selected, require_partition_filter will be declared as expected by the Google provider version >= 5.3. Starting with this version, the require_partition_filter argument is located outside the time_partitioning definition. Default to False (old behavior)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "test": "npm run compile && node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.64.0",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vscode/test-electron": "^2.0.3",
+    "eslint": "^8.0.1",
+    "eslint-config-standard-with-typescript": "^39.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.1.3",
+    "typescript": "*"
+  },
+  "dependencies": {
+    "hcl2-json-parser": "^1.0.1",
+    "hcl2-parser": "^1.0.3"
+  }
+}

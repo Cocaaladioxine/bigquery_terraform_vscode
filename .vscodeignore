@@ -1,0 +1,9 @@
+src/lib/test/**
+**/*.ts
+**/tsconfig.json
+TestProjects/**
+.vscode/**
+**/*.map
+node_modules/**
+!node_modules/js-hcl-parser/**
+!node_modules/hcl2-parser/**
