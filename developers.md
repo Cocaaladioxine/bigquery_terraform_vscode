@@ -2,55 +2,43 @@
 
 
 
-### Pour débuter : 
+# Startup : 
 
-- Avoir Node JS et NPM installé
+- Have Node JS et Yarn installed. 
 
-- Lancer un npm install
+- run "yarn" to install node_modules
 
-- Allez sur extension.ts et faire un F5
-
-- Normalement ca va lancer le nécéssaire >> Attention il est préférable d'avoir cmd comme console par défaut (surtout pas cmder ca plante chez moi)
-En fait un nouveau vscode s'ouvre. L'idéal est de se créer un workspace avec des trucs pour faire des tests dedans (genre des sql).
-
-- y'a pas mal de debug qui apparait dans la debug console de vscode
-
-- On peut modifier le code 'en live'. Une fois la modif réalisée, on retourne dans le vscode de test et on fait un ctrl-r pour recharger
-
-- Pour lancer une "commande" c'est ctrl-shift-p > actuellement la seule que j'ai créée est "Starting BQ Helper"
+- There is a configuration for VSCode : just press F5 to start debuging 
 
 
+# Info
 
+- I left many console logs
 
-Si on veut partir de zéro, à ne pas faire dans ce repo ci :
-
-Pour commencer à developper une extension :
+- The official documentation to start developing an extension :
 https://code.visualstudio.com/api/get-started/your-first-extension
-
-avoir Git, Node.JS
-Installer Yeoman et VSCode Extension : 
-'''
-npm install -g yo generator-code
-'''
-'''
-yo code 
-'''
 
 -----------------------------------------------------------------------------------------------------------
 
 ### Building vsix (extension package)
 
 First, install vsce globally
-
+```
 $ npm install -g vsce
+```
 
-then run 
-
+Then, run 
+```
 $ vsce package
+```
+
+
 
 
 
 ### Some Java/Typescript && vscode hints: 
+
+- it's my old personal notes, to be moved somewhere else
 
 #### Utilisation de .then()
 
