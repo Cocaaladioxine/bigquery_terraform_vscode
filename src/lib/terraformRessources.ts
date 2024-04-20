@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { TextDecoder } from 'util'
 import type { Column, PlantUmlData, PlantUmlResponse, ResourceArray, LocalArray } from './interfaces'
-import * as hcl2 from 'hcl2-parser'
+import * as hcl2 from 'hcl2-json-parser'
 
 //  Base code is from https://code.visualstudio.com/api/extension-guides/tree-view
 // I'll use it as a scaffold for building my tree view item
@@ -63,7 +63,6 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
 
   // Retourne le fils d'un element, ou de la racine si pas d'élement
   getChildren (element?: TfObject): Thenable<TfObject[]> {
-    // console.log("request");
     if (element === undefined) { return Promise.resolve(this.projectObjects) } else {
       const children = element.getChildren()
       if (children) {
@@ -143,9 +142,6 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
       const definition: string[] = matchRecursive(localsFile, 'locals', '{...}')
 
       if (!definition || definition.length === 0) { continue }
-      if (uri.fsPath === 'f:\\Projets\\TestProjects\\dataplatform--dwh--storage_management\\terraform\\soda.tf') {
-        console.log(uri.fsPath)
-      }
 
       // Replace some tricky stuff:
       // 1. Enclose variables and locals : 'gcp_project_id = local.dtm_name' by 'gcp_project_id = "${local.dtm_name}'"" => To use the same syntax everywhere
@@ -157,11 +153,11 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
       })
 
       localsList = 'locals { \n' + localsList + '\n}\n'
-      console.log(localsList)
 
-      const hcl2Locals = hcl2.parseToObject(localsList)
+      // Could do a try{} catch{}
+      const hcl2Locals = await hcl2.parseToObject(localsList)
       // Show Message if error while parsing (result is null if error)
-      if (hcl2Locals[0] == null) {
+      if (hcl2Locals.locals[0] == null) {
         let currentUri = uri.fsPath
         if (this.terraformPath && vscode.workspace.workspaceFolders) {
           currentUri = path.relative(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, this.terraformPath), currentUri)
@@ -170,7 +166,7 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
         continue
       }
 
-      for (const locals of hcl2Locals[0].locals) {
+      for (const locals of hcl2Locals.locals) {
         for (const localName in locals) {
           if (typeof (locals[localName]) === 'string' && locals[localName].trim().startsWith('${{')) {
             // TODO : see if we could improve and handle at least objects with only variables inside
@@ -255,7 +251,6 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
   private isConditionalExpression (expression: string): boolean {
     // Trim the expression to be sure
     expression = expression.trim()
-    console.log(expression)
     // Check if the expression is surrounded by ${ }
     // bard error, missing )
     if (!expression.startsWith('${') || !expression.endsWith('}')) {
@@ -303,34 +298,36 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
     for (const uri of uris) {
       const rawFile = fs.readFileSync(uri.fsPath, 'utf8')
       const resourcesFile = this.stripComments(rawFile)
-      const terraformObjects: Array<any | null> = hcl2.parseToObject(resourcesFile)
+      // Could do a try{} catch{}
+      // Need to repair this
+      const terraformObjects: Record<string, any> = await hcl2.parseToObject(resourcesFile)
 
-      if (!terraformObjects[0]) {
+      if (!terraformObjects) {
         continue
       }
-      console.log(terraformObjects)
-      for (const objectType in terraformObjects[0]) {
+      for (const objectType in terraformObjects) {
         if (objectType === 'resource') {
-          const resourceList: Object = terraformObjects[0].resource /* TODO FIX Object? */ // eslint-disable-line @typescript-eslint/ban-types
+          const resourceList: Object = terraformObjects.resource /* TODO FIX Object? */ // eslint-disable-line @typescript-eslint/ban-types
           const analysedResources = this.resourceAnalysis(resourceList, uri, rawFile)
           Object.assign(resourcesDictionary, analysedResources)
-        }
-        if (objectType === 'terraform') {
+        } else if (objectType === 'terraform') {
+          console.log('found terraform resource')
           // Won't use now TODO move here ???
-
-        }
-        if (objectType === 'locals') {
+        } else if (objectType === 'locals') {
+          console.log('found locals resource')
+          // Won't use now, may I move the current local process here ?
+        } else if (objectType === 'provider') {
+          console.log('found a provider resource')
           // Won't use now
-
-        }
-        if (objectType === 'provider') {
+        } else if (objectType === 'module') {
+          console.log('found a module resource')
           // Won't use now
-
+        } else {
+          console.log('unknown - found a ' + objectType + ' resource')
         }
       }
     }
 
-    console.log(resourcesDictionary)
     const resourceTypeDict: resourceTypeDictionary = {}
     let idx = 0
     const returnArray: TfObject[] = []
@@ -384,8 +381,6 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
         let tableClusters: string[] | undefined
 
         const resourceDeclaration = bqtableResources[resourceName][0]
-        console.log(JSON.stringify(resourceDeclaration))
-
         // common properties:  disabled_flag , resource position
         disabledFlag = !!(resourceDeclaration.count && resourceDeclaration.count === 0)
         stringPos = rawFile.indexOf(resourceName)
@@ -510,7 +505,6 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
       }
       currentLevel = currentLevel - 1
     }
-    console.log(returnArray)
     return returnArray
   }
 
@@ -537,7 +531,6 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
       if (fileContent !== undefined) {
         // Traitement pour les fichiers en mode template_file, sql.
         if ((extension !== undefined && extension === 'sql') || (language !== undefined && language.substring(0, 3) === 'sql')) {
-          // console.log(this.getReplacements('sql', 'toVar', fileName));
           fileContent = this.replaceLocals(fileContent, fileName, workspace, 'sql', direction)
           void this.applyLocalsReplacement(fileContent, textRange)
         }
@@ -644,7 +637,6 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
         }
       }
     }
-    // console.log(replacementArray);
     return replacementArray
   }
 
@@ -693,10 +685,8 @@ export class TerraformResources implements vscode.TreeDataProvider<TfObject> {
     try {
       await fs.stat(schemaPath)
       schema = JSON.parse(new TextDecoder().decode(await fs.readFile(schemaPath)))
-      console.log(schema)
       return schema
     } catch (e) {
-      console.log('schema does not exist')
       return null // create
     }
   }
@@ -770,7 +760,6 @@ Creer ceci :
 
     let content = createTable
     const data = '!$data=' + JSON.stringify(plantUmlDataArray, null, 2) + '\r\n'
-    // console.log(data);
     if (type === 'plantUml') { content = '@startuml\n' + data + plantUmlconfig + plantUml + links + '\n@enduml' }
 
     void vscode.workspace.openTextDocument({ content, language: 'puml' }).then((doc: vscode.TextDocument) => {
@@ -888,10 +877,6 @@ Creer ceci :
     }
     for (const resourceName in resourceArray) {
       const resource = resourceArray[resourceName]
-      if (resource.table_id === 'vd_store') {
-        console.log(resource.schemaPath?.toLowerCase())
-        console.log(path)
-      }
       if (resource.templatefile?.toLowerCase().endsWith(path.toLowerCase()) || resource.schemaPath?.toLowerCase().endsWith(path.toLowerCase())) { /* || operator is the right one, it's a OR, not a coalesce ! */ // eslint-disable-line @typescript-eslint/prefer-nullish-coalescing
         const workspace = vscode.workspace.workspaceFolders
         if (workspace !== undefined && workspace?.length > 0 && this.terraformPath && resource.schemaPath) {
@@ -948,7 +933,6 @@ Creer ceci :
       let baseFile = fs.readFileSync(uri.fsPath, 'utf8')
       const resourcesFile = this.stripComments(baseFile)
       let toUpdate = false
-      console.log(uri.path)
       for (const resource of resourcesFile.matchAll(/resource[ ]+"(\w+)"[ ]+"([\w\-]+)"[ ]+/mg)) {
         if (resource.index !== undefined) {
           const resourceURI = resource[0]
@@ -980,14 +964,12 @@ Creer ceci :
               if (type === 'SQL') {
                 const replacementString = ' templatefile("' + targetDir + '/' + tableId[1] + '.sql", { \r\n' + varList + '  })\r\n'
                 fs.writeFileSync(vscode.Uri.joinPath(targetPath, tableId[1] + '.sql').fsPath, include.trimLeft())
-                console.log(baseFile.substring(0, includeDeclarationStart))
                 baseFile = baseFile.substring(0, includeDeclarationStart) + replacementString + baseFile.substring(includeDeclarationEnd)
                 toUpdate = true
               }
               if (type === 'SCHEMA') {
                 const replacementString = ' file("' + targetDir + '/' + tableId[1] + '.json")\r\n'
                 fs.writeFileSync(vscode.Uri.joinPath(targetPath, tableId[1] + '.json').fsPath, include.trimLeft())
-                console.log(baseFile.substring(0, includeDeclarationStart))
                 baseFile = baseFile.substring(0, includeDeclarationStart) + replacementString + baseFile.substring(includeDeclarationEnd)
                 toUpdate = true
               }
@@ -998,7 +980,6 @@ Creer ceci :
       if (toUpdate) {
         await vscode.commands.executeCommand('vscode.open', uri).then((any: any) => {
           if (vscode.window.activeTextEditor) {
-            console.log(uri)
             const textEditor = vscode.window.activeTextEditor
             const startPosition = textEditor.document.positionAt(0)
             const lastLineText = textEditor.document.lineAt(new vscode.Position(textEditor.document.lineCount - 1, 0))

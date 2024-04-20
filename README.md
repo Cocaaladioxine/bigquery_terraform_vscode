@@ -88,9 +88,6 @@ SQL
 
 ## Release Notes
 
-### 0.2.3
-
-- fixed a bug concerning paths on *nix os
 
 ### 0.2.4
 
@@ -102,12 +99,10 @@ SQL
 - add and handle a config `bqtf.partitionFilterOutsideDeclaration`
 - fix a bug that prevented to use the wizard on a table without date/datetime/timestamp field
 
-## TODO
+### 0.3.0
 
-- Finalize ESLint
-- Clone HCL2-parser and upgrade to the latest @tmccombs/hcl2json
-- Check if @tmccombs/hcl2json handles variables
-- Think about the modules and how to handle them
-- See how to handle objects locals
+- fix schema generation
+- switch to hcl2-json-parser, an updated version of hcl2-parser
+- publish code
 
 **Enjoy!**
