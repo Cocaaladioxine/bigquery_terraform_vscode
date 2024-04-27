@@ -28,7 +28,7 @@ const vscode = __importStar(require("vscode"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const util_1 = require("util");
-const hcl2 = __importStar(require("hcl2-parser"));
+const hcl2 = __importStar(require("hcl2-json-parser"));
 class TerraformResources {
     constructor(context, activeEditor) {
         this._onDidChangeTreeData = new vscode.EventEmitter();
@@ -46,7 +46,6 @@ class TerraformResources {
     }
     // Retourne le fils d'un element, ou de la racine si pas d'élement
     getChildren(element) {
-        // console.log("request");
         if (element === undefined) {
             return Promise.resolve(this.projectObjects);
         }
@@ -128,9 +127,6 @@ class TerraformResources {
             if (!definition || definition.length === 0) {
                 continue;
             }
-            if (uri.fsPath === 'f:\\Projets\\TestProjects\\dataplatform--dwh--storage_management\\terraform\\soda.tf') {
-                console.log(uri.fsPath);
-            }
             // Replace some tricky stuff:
             // 1. Enclose variables and locals : 'gcp_project_id = local.dtm_name' by 'gcp_project_id = "${local.dtm_name}'"" => To use the same syntax everywhere
             // Functions and conditional syntaxes are automatically enclosed in ${ } by the parser
@@ -139,10 +135,10 @@ class TerraformResources {
                 localsList += locals.trim() + '\n';
             });
             localsList = 'locals { \n' + localsList + '\n}\n';
-            console.log(localsList);
-            const hcl2Locals = hcl2.parseToObject(localsList);
+            // Could do a try{} catch{}
+            const hcl2Locals = await hcl2.parseToObject(localsList);
             // Show Message if error while parsing (result is null if error)
-            if (hcl2Locals[0] == null) {
+            if (hcl2Locals.locals[0] == null) {
                 let currentUri = uri.fsPath;
                 if (this.terraformPath && vscode.workspace.workspaceFolders) {
                     currentUri = path.relative(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, this.terraformPath), currentUri);
@@ -150,7 +146,7 @@ class TerraformResources {
                 void vscode.window.showErrorMessage('Error parsing ' + currentUri); // Todo : show relative path
                 continue;
             }
-            for (const locals of hcl2Locals[0].locals) {
+            for (const locals of hcl2Locals.locals) {
                 for (const localName in locals) {
                     if (typeof (locals[localName]) === 'string' && locals[localName].trim().startsWith('${{')) {
                         // TODO : see if we could improve and handle at least objects with only variables inside
@@ -250,7 +246,6 @@ class TerraformResources {
     isConditionalExpression(expression) {
         // Trim the expression to be sure
         expression = expression.trim();
-        console.log(expression);
         // Check if the expression is surrounded by ${ }
         // bard error, missing )
         if (!expression.startsWith('${') || !expression.endsWith('}')) {
@@ -293,29 +288,39 @@ class TerraformResources {
         for (const uri of uris) {
             const rawFile = fs.readFileSync(uri.fsPath, 'utf8');
             const resourcesFile = this.stripComments(rawFile);
-            const terraformObjects = hcl2.parseToObject(resourcesFile);
-            if (!terraformObjects[0]) {
+            // Could do a try{} catch{}
+            // Need to repair this
+            const terraformObjects = await hcl2.parseToObject(resourcesFile);
+            if (!terraformObjects) {
                 continue;
             }
-            console.log(terraformObjects);
-            for (const objectType in terraformObjects[0]) {
+            for (const objectType in terraformObjects) {
                 if (objectType === 'resource') {
-                    const resourceList = terraformObjects[0].resource; /* TODO FIX Object? */ // eslint-disable-line @typescript-eslint/ban-types
+                    const resourceList = terraformObjects.resource; /* TODO FIX Object? */ // eslint-disable-line @typescript-eslint/ban-types
                     const analysedResources = this.resourceAnalysis(resourceList, uri, rawFile);
                     Object.assign(resourcesDictionary, analysedResources);
                 }
-                if (objectType === 'terraform') {
+                else if (objectType === 'terraform') {
+                    console.log('found terraform resource');
                     // Won't use now TODO move here ???
                 }
-                if (objectType === 'locals') {
+                else if (objectType === 'locals') {
+                    console.log('found locals resource');
+                    // Won't use now, may I move the current local process here ?
+                }
+                else if (objectType === 'provider') {
+                    console.log('found a provider resource');
                     // Won't use now
                 }
-                if (objectType === 'provider') {
+                else if (objectType === 'module') {
+                    console.log('found a module resource');
                     // Won't use now
+                }
+                else {
+                    console.log('unknown - found a ' + objectType + ' resource');
                 }
             }
         }
-        console.log(resourcesDictionary);
         const resourceTypeDict = {};
         let idx = 0;
         const returnArray = [];
@@ -358,7 +363,6 @@ class TerraformResources {
                 let tablePartition;
                 let tableClusters;
                 const resourceDeclaration = bqtableResources[resourceName][0];
-                console.log(JSON.stringify(resourceDeclaration));
                 // common properties:  disabled_flag , resource position
                 disabledFlag = !!(resourceDeclaration.count && resourceDeclaration.count === 0);
                 stringPos = rawFile.indexOf(resourceName);
@@ -467,7 +471,6 @@ class TerraformResources {
             }
             currentLevel = currentLevel - 1;
         }
-        console.log(returnArray);
         return returnArray;
     }
     /** * terraformReplace()
@@ -490,7 +493,6 @@ class TerraformResources {
             if (fileContent !== undefined) {
                 // Traitement pour les fichiers en mode template_file, sql.
                 if ((extension !== undefined && extension === 'sql') || (language !== undefined && language.substring(0, 3) === 'sql')) {
-                    // console.log(this.getReplacements('sql', 'toVar', fileName));
                     fileContent = this.replaceLocals(fileContent, fileName, workspace, 'sql', direction);
                     void this.applyLocalsReplacement(fileContent, textRange);
                 }
@@ -615,7 +617,6 @@ class TerraformResources {
                 }
             }
         }
-        // console.log(replacementArray);
         return replacementArray;
     }
     replaceLocals(text, fileName, workspace, type, direction) {
@@ -660,11 +661,9 @@ class TerraformResources {
         try {
             await fs.stat(schemaPath);
             schema = JSON.parse(new util_1.TextDecoder().decode(await fs.readFile(schemaPath)));
-            console.log(schema);
             return schema;
         }
         catch (e) {
-            console.log('schema does not exist');
             return null; // create
         }
     }
@@ -739,7 +738,6 @@ class TerraformResources {
         }
         let content = createTable;
         const data = '!$data=' + JSON.stringify(plantUmlDataArray, null, 2) + '\r\n';
-        // console.log(data);
         if (type === 'plantUml') {
             content = '@startuml\n' + data + plantUmlconfig + plantUml + links + '\n@enduml';
         }
@@ -865,10 +863,6 @@ class TerraformResources {
         }
         for (const resourceName in resourceArray) {
             const resource = resourceArray[resourceName];
-            if (resource.table_id === 'vd_store') {
-                console.log(resource.schemaPath?.toLowerCase());
-                console.log(path);
-            }
             if (resource.templatefile?.toLowerCase().endsWith(path.toLowerCase()) || resource.schemaPath?.toLowerCase().endsWith(path.toLowerCase())) { /* || operator is the right one, it's a OR, not a coalesce ! */ // eslint-disable-line @typescript-eslint/prefer-nullish-coalescing
                 const workspace = vscode.workspace.workspaceFolders;
                 if (workspace !== undefined && workspace?.length > 0 && this.terraformPath && resource.schemaPath) {
@@ -921,7 +915,6 @@ class TerraformResources {
             let baseFile = fs.readFileSync(uri.fsPath, 'utf8');
             const resourcesFile = this.stripComments(baseFile);
             let toUpdate = false;
-            console.log(uri.path);
             for (const resource of resourcesFile.matchAll(/resource[ ]+"(\w+)"[ ]+"([\w\-]+)"[ ]+/mg)) {
                 if (resource.index !== undefined) {
                     const resourceURI = resource[0];
@@ -954,14 +947,12 @@ class TerraformResources {
                             if (type === 'SQL') {
                                 const replacementString = ' templatefile("' + targetDir + '/' + tableId[1] + '.sql", { \r\n' + varList + '  })\r\n';
                                 fs.writeFileSync(vscode.Uri.joinPath(targetPath, tableId[1] + '.sql').fsPath, include.trimLeft());
-                                console.log(baseFile.substring(0, includeDeclarationStart));
                                 baseFile = baseFile.substring(0, includeDeclarationStart) + replacementString + baseFile.substring(includeDeclarationEnd);
                                 toUpdate = true;
                             }
                             if (type === 'SCHEMA') {
                                 const replacementString = ' file("' + targetDir + '/' + tableId[1] + '.json")\r\n';
                                 fs.writeFileSync(vscode.Uri.joinPath(targetPath, tableId[1] + '.json').fsPath, include.trimLeft());
-                                console.log(baseFile.substring(0, includeDeclarationStart));
                                 baseFile = baseFile.substring(0, includeDeclarationStart) + replacementString + baseFile.substring(includeDeclarationEnd);
                                 toUpdate = true;
                             }
@@ -972,7 +963,6 @@ class TerraformResources {
             if (toUpdate) {
                 await vscode.commands.executeCommand('vscode.open', uri).then((any) => {
                     if (vscode.window.activeTextEditor) {
-                        console.log(uri);
                         const textEditor = vscode.window.activeTextEditor;
                         const startPosition = textEditor.document.positionAt(0);
                         const lastLineText = textEditor.document.lineAt(new vscode.Position(textEditor.document.lineCount - 1, 0));

@@ -7,7 +7,7 @@ Any code optimization or improvement is welcome.
 ## Contributing
 
 Please make pull requests. I'll do my best to review them asap.
-Please do lint your code with estlint when contributing.
+Please do lint your code with eslint when contributing.
 
 # Startup : 
 
