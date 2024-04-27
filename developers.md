@@ -1,5 +1,12 @@
+# Intro
 
+I'm not a professional developer. I work in Data, and my domain of expertise is around databases, SQL and ETL's.
+This means that my code is far from perfect and that I don't have a deep knowledge of Typescript or Javascript.
+Any code optimization or improvement is welcome.
 
+## Contributing
+
+Please make pull requests. I'll do my best to review them asap.
 
 
 # Startup : 
@@ -31,39 +38,3 @@ Then, run
 ```
 $ vsce package
 ```
-
-
-
-
-
-### Some Java/Typescript && vscode hints: 
-
-- it's my old personal notes, to be moved somewhere else
-
-#### Utilisation de .then()
-
-Lorsqu'on veut executer du code après une promesse, on peut utiliser ".then()"
-
-Le format est :
-
-maPromesse.then( (xxx) =>  {     
-    code à executer;
-});
-
-xxx peut être quelque chose renvoyé par la promesse. (le resolve)
-See : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then
-
-
-
-#### Aller à un endroit précis d'un fichier
-
-Il faut avoir un "range" (ici displayRange). On peut passer un second paramètre pour indiquer le comportement (début, fin, milieu...)
-editor.revealRange(displayRange, vs.TextEditorRevealType.InCenterIfOutsideViewport);
-editor.revealRange(new vs.Range(displayRange.start, displayRange.start), vs.TextEditorRevealType.Default);
-
-
-#### Compter les occurences dans une chaine de caractères
-
-let temp = "Welcome to W3Docs";
-let count = (temp.match(/to/g) || []).length;
-console.log(count);

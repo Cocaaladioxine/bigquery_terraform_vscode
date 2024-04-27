@@ -4,7 +4,7 @@
   "description": "An extension to help with BigQuery and Terraform development",
   "version": "0.3.0",
   "publisher": "Cocaaladioxine",
-  "licence": "unlicenced",
+  "licence": "MIT",
   "engines": {
     "vscode": "^1.64.0"
   },
