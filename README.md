@@ -1,7 +1,4 @@
-# bigqueryhelper README
-
-
-# bigquery-tf-vscode-ext
+# BigQuery and Terraform Helper
 
 This extension is a personal project that aims at simplifying work involving BigQuery and Terraform. This extension was developed during my free time to address the challenges of repetitive tasks and streamline our processes at my job.
 
