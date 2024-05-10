@@ -2,13 +2,13 @@
   "name": "bigqueryhelper",
   "displayName": "BigQuery and Terraform Helper",
   "description": "An extension to help with BigQuery and Terraform development",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "publisher": "Backpageek",
   "licence": "MIT",
   "engines": {
     "vscode": "^1.64.0"
   },
-  "private": "true",
+  "private": "false",
   "repository": {
     "type": "git",
     "url": "https://github.com/Cocaaladioxine/bigquery_terraform_vscode"
@@ -277,7 +277,6 @@
     "typescript": "*"
   },
   "dependencies": {
-    "hcl2-json-parser": "^1.0.1",
-    "hcl2-parser": "^1.0.3"
+    "hcl2-json-parser": "^1.0.1"
   }
 }

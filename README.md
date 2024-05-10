@@ -1,30 +1,18 @@
 # BigQuery and Terraform Helper
 
-This extension is a personal project that aims at simplifying work involving BigQuery and Terraform. This extension was developed during my free time to address the challenges of repetitive tasks and streamline our processes at my job.
+This extension, a personal project, simplifies working with BigQuery and Terraform. Developed in my spare time, it aims to reduce repetitive tasks and streamline work processes at my job.
 
-In my company, where BigQuery and Terraform are frequently utilized, I noticed a need for simplification. Drawing inspiration from familiar ETL tools like Talend and Stambia, I've incorporated features that aim to bring back that simplicity, just like the "reverse schema" button.
+Inspired by ETL tools like Talend, it provides features to automate workflows, such as a "reverse schema" button. Although helpful, it has limitations, especially with complex Terraform code.
 
-It's important to acknowledge that while the extension helps increasing efficiency, it does have its limitations. Handling intricate Terraform code, in particular, presents challenges.
+The extension's purpose is to:
 
-The features incorporated are based on my own needs and feedback from colleagues who also face similar challenges.
-
-In a nutshell, this extension intends to:
-
-- Simplify Tasks: Reduce repetitive actions and automate processes
-
-- Bring Back Ease: Incorporate intuitive features reminiscent of user-friendly ETL tools.
-
-- Address Real Needs: Developed based on genuine feedback from colleagues to ensure practicality.
-
-- Stay Realistic: While it has its limitations, it strives to offer practical solutions for everyday tasks.
-
-At the moment, the code is "closed source", but you can freely use the extension.
-I'm open to change and improvement requests.
-
+- Automate tasks and reduce repetition
+- Offer user-friendly features
+- Address real needs based on colleague feedback
 
 ## Features
 
-At the moment, we have :
+At the moment, the extension provides :
 
 - List of Terraform Locals and Resources
 - BQ Dry Run
@@ -49,7 +37,12 @@ Have a look at the features [here](features.md).
 ## Requirements
 
 Latest Visual Studio Code 
-Up to date and configured Google Cloud SDK
+Up to date and configured Google Cloud SDK.
+Follow Google instructions to install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk)
+
+Your must be able to run this command in a shell for the extension to work properly:
+
+`bq show --format=prettyjson bigquery-public-data:bbc_news.fulltext`
 
 ## Extension Settings
 
@@ -101,5 +94,9 @@ SQL
 - fix schema generation
 - switch to hcl2-json-parser, an updated version of hcl2-parser
 - publish code
+
+### 0.3.1
+
+- Just some doc fixes 
 
 **Enjoy!**
