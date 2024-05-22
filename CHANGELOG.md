@@ -4,6 +4,10 @@ All notable changes to the "bigqueryhelper" extension will be documented in this
 
 ## [Releases]
 
+### 0.3.3
+
+- fix unbundled module
+
 ### 0.3.2 / 0.3.1
 
 - doc fixes, changelog update, and so.

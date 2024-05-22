@@ -79,24 +79,19 @@ SQL
 ## Release Notes
 
 
-### 0.2.4
+### 0.3.3
 
-- Better objects locals detection and rejection
+- fix unbundled module
 
-### 0.2.5
+### 0.3.2 / 0.3.1
 
-- add and handle a config `bqtf.tableSchemaDefinition`
-- add and handle a config `bqtf.partitionFilterOutsideDeclaration`
-- fix a bug that prevented to use the wizard on a table without date/datetime/timestamp field
+- doc fixes, changelog update, and so.
 
 ### 0.3.0
 
-- fix schema generation
 - switch to hcl2-json-parser, an updated version of hcl2-parser
+- fix schema generation
 - publish code
 
-### 0.3.1
-
-- Just some doc fixes 
 
 **Enjoy!**
